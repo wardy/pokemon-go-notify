@@ -7,6 +7,17 @@ const { timeLeftInSeconds } = require('./shared');
 const pusher = new PushBullet('o.lSDa9wEEuFFaPGTUDqnmvS3IneqY2KzY');
 const notificationTracker = new NotificationTracker();
 
+
+const config = {
+  location: {
+    lat: 51.4877871,
+    lng: -0.32711629999999997
+  },
+  tolerance: {
+    distanceFromLocation: 5,
+    ivPercentage: 80
+  }
+}
 const location = {
   lat: 51.4877871,
   lng: -0.32711629999999997
@@ -27,11 +38,11 @@ function filterExpired(pokemon) {
 }
 
 function filterDistance(pokemon) {
-  return distance(location.lat, location.lng, pokemon.lat, pokemon.lng) <= 5;
+  return distance(config.location.lat, config.location.lng, pokemon.lat, pokemon.lng) <= config.tolerance.distanceFromLocation;
 }
 
 function filterIV(pokemon) {
-  return pokemon.ivPercentage >= 90;
+  return pokemon.ivPercentage >= config.tolerance.ivPercentage;
 }
 
 function distance(lat1, lon1, lat2, lon2) {
@@ -45,7 +56,7 @@ function distance(lat1, lon1, lat2, lon2) {
 }
 
 function buildPokemonData(pokemon) {
-  pokemon.distance = distance(location.lat, location.lng, pokemon.lat, pokemon.lng);
+  pokemon.distance = distance(config.location.lat, config.location.lng, pokemon.lat, pokemon.lng);
   pokemon.remainingTime = timeLeftInSeconds(pokemon.despawn);
   pokemon.googleMapsLink = `https://maps.google.com/maps?q=${pokemon.lat},${pokemon.lng}`;
   pokemon.name = PokemonNames[pokemon.pokemon_id];
@@ -64,7 +75,7 @@ function timeToTimeRemainingString(seconds) {
 }
 
 function sendMonToPhone(pokemon) {
-  request(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${location.lat},${location.lng}&destinations=${pokemon.lat},${pokemon.lng}&key=AIzaSyC4SHFlG3YKI-CNx1W67L4UVr4NvwiWudY`, function(error, response, body) {
+  request(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${config.location.lat},${config.location.lng}&destinations=${pokemon.lat},${pokemon.lng}&key=AIzaSyC4SHFlG3YKI-CNx1W67L4UVr4NvwiWudY`, function(error, response, body) {
     const data = JSON.parse(body);
     const { name, ivPercentage, googleMapsLink } = pokemon;
     const title = `${name}: ${ivPercentage}% | ${pokemon.distance.toFixed(1)}km away | ${timeToTimeRemainingString(timeLeftInSeconds(pokemon.despawn))} | ${data['destination_addresses'][0]}`
@@ -96,4 +107,3 @@ function main() {
 }
 
 setInterval(main, 30000);
-
