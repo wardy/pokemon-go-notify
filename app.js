@@ -7,7 +7,6 @@ const { timeLeftInSeconds } = require('./shared');
 const pusher = new PushBullet('o.lSDa9wEEuFFaPGTUDqnmvS3IneqY2KzY');
 const notificationTracker = new NotificationTracker();
 
-
 const config = {
   location: {
     lat: 51.4877871,
@@ -15,13 +14,9 @@ const config = {
   },
   tolerance: {
     distanceFromLocation: 5,
-    ivPercentage: 80
+    ivPercentage: 1
   }
 }
-const location = {
-  lat: 51.4877871,
-  lng: -0.32711629999999997
-};
 
 const options = {
     url: 'https://londonpogomap.com/query2.php?token=pleaseDontStealOurData&since=0&mons=3,6,9,59,65,68,76,89,103,106,107,108,112,113,130,131,134,135,136,137,142,143,149,154,157,160,181,196,197,201,212,214,232,233,237,242,247,248',
@@ -41,8 +36,8 @@ function filterDistance(pokemon) {
   return distance(config.location.lat, config.location.lng, pokemon.lat, pokemon.lng) <= config.tolerance.distanceFromLocation;
 }
 
-function filterIV(pokemon) {
-  return pokemon.ivPercentage >= config.tolerance.ivPercentage;
+function filterIV({ ivPercentage }) {
+  return ivPercentage === -1 || ivPercentage >= config.tolerance.ivPercentage;
 }
 
 function distance(lat1, lon1, lat2, lon2) {
@@ -55,12 +50,20 @@ function distance(lat1, lon1, lat2, lon2) {
   return 12742 * Math.asin(Math.sqrt(a)); // 2 * R; R = 6371 km
 }
 
+function calcIVPercentage(attack, defence, stamina) {
+  if (attack < 0 || defence < 0 || stamina < 0 ) {
+    return -1;
+  } else {
+    return Math.floor((attack + defence + stamina) / 45 * 100);
+  }
+}
+
 function buildPokemonData(pokemon) {
   pokemon.distance = distance(config.location.lat, config.location.lng, pokemon.lat, pokemon.lng);
   pokemon.remainingTime = timeLeftInSeconds(pokemon.despawn);
   pokemon.googleMapsLink = `https://maps.google.com/maps?q=${pokemon.lat},${pokemon.lng}`;
   pokemon.name = PokemonNames[pokemon.pokemon_id];
-  pokemon.ivPercentage = Math.floor((parseInt(pokemon.attack, 10) + parseInt(pokemon.defence, 10) + parseInt(pokemon.stamina, 10)) / 45 * 100);
+  pokemon.ivPercentage = calcIVPercentage(parseInt(pokemon.attack), parseInt(pokemon.defence), parseInt(pokemon.stamina))
   return pokemon;
 }
 
@@ -75,17 +78,17 @@ function timeToTimeRemainingString(seconds) {
 }
 
 function sendMonToPhone(pokemon) {
+  console.log('pokemon', pokemon);
   request(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${config.location.lat},${config.location.lng}&destinations=${pokemon.lat},${pokemon.lng}&key=AIzaSyC4SHFlG3YKI-CNx1W67L4UVr4NvwiWudY`, function(error, response, body) {
     const data = JSON.parse(body);
     const { name, ivPercentage, googleMapsLink } = pokemon;
-    const title = `${name}: ${ivPercentage}% | ${pokemon.distance.toFixed(1)}km away | ${timeToTimeRemainingString(timeLeftInSeconds(pokemon.despawn))} | ${data['destination_addresses'][0]}`
+    const title = `${name}: ${ivPercentage !== -1 ? ivPercentage : '???'}% | ${pokemon.distance.toFixed(1)}km away | ${timeToTimeRemainingString(timeLeftInSeconds(pokemon.despawn))} | ${data['destination_addresses'][0]}`
     const link = `${googleMapsLink}`
     pusher.link('', title, link, function(error, response) {
       notificationTracker.markAsNotified(pokemon);
     });
   });
 }
-
 
 function main() {
   request(options, function (error, response, body) {
@@ -106,4 +109,4 @@ function main() {
   });
 }
 
-setInterval(main, 30000);
+setInterval(main, 5000);

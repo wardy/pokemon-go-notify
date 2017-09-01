@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
+    "dev": "nodemon app.js",
     "test": "mocha",
     "test:watch": "mocha -w"
   },
@@ -15,5 +16,7 @@
     "pushbullet": "^2.0.0",
     "request": "^2.81.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
 }
