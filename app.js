@@ -19,8 +19,8 @@ const config = {
 }
 
 const options = {
-    url: 'https://londonpogomap.com/query2.php?token=pleaseDontStealOurData&since=0&mons=3,6,9,59,65,68,76,89,103,106,107,108,112,113,130,131,134,135,136,137,142,143,149,154,157,160,181,196,197,201,212,214,232,233,237,242,247,248',
-    headers: { 'referer': 'https://londonpogomap.com/index.html' }
+  url: 'https://londonpogomap.com/query2.php?token=pleaseDontStealOurData&since=0&mons=3,6,9,59,65,68,76,89,103,106,107,108,112,113,130,131,134,135,136,137,142,143,149,154,157,160,181,196,197,201,212,214,232,233,237,242,247,248',
+  headers: { 'referer': 'https://londonpogomap.com/index.html' }
 };
 
 function filterShitMons(pokemon) {
@@ -78,7 +78,6 @@ function timeToTimeRemainingString(seconds) {
 }
 
 function sendMonToPhone(pokemon) {
-  console.log('pokemon', pokemon);
   request(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${config.location.lat},${config.location.lng}&destinations=${pokemon.lat},${pokemon.lng}&key=AIzaSyC4SHFlG3YKI-CNx1W67L4UVr4NvwiWudY`, function(error, response, body) {
     const data = JSON.parse(body);
     const { name, ivPercentage, googleMapsLink } = pokemon;
