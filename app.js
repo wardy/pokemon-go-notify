@@ -1,4 +1,7 @@
 const request = require('request');
+const path = require('path');
+const express = require('express');
+const bodyParser = require('body-parser')
 const PushBullet = require('pushbullet');
 const PokemonNames = require('./pokemon-data');
 const NotificationTracker = require('./notification-tracker');
@@ -108,4 +111,18 @@ function main() {
   });
 }
 
-setInterval(main, 5000);
+const server = express();
+server.use(bodyParser.json());
+server.use(express.static(path.join(__dirname, 'client')));
+
+server.post('/update-position', function(req, res){
+  console.log(req.body, config);
+  console.log(typeof req.body.lat);
+  config.location = req.body.location
+  console.log(config);
+  res.sendStatus(200);
+});
+
+server.listen(process.env.PORT || 1234);
+
+setInterval(main, 30000);
