@@ -81,7 +81,7 @@ function timeToTimeRemainingString(seconds) {
 }
 
 function sendMonToPhone(pokemon) {
-  request(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${config.location.lat},${config.location.lng}&destinations=${pokemon.lat},${pokemon.lng}&key=AIzaSyC4SHFlG3YKI-CNx1W67L4UVr4NvwiWudY`, function(error, response, body) {
+  request(`https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${config.location.lat},${config.location.lng}&destinations=${pokemon.lat},${pokemon.lng}&key=${process.env.GOOGLEMAPS}`, function(error, response, body) {
     const data = JSON.parse(body);
     const { name, ivPercentage, googleMapsLink } = pokemon;
     const title = `${name}: ${ivPercentage !== -1 ? ivPercentage : '???'}% | ${pokemon.distance.toFixed(1)}km away | ${timeToTimeRemainingString(timeLeftInSeconds(pokemon.despawn))} | ${data['destination_addresses'][0]}`
