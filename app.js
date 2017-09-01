@@ -7,7 +7,7 @@ const PokemonNames = require('./pokemon-data');
 const NotificationTracker = require('./notification-tracker');
 const { timeLeftInSeconds } = require('./shared');
 
-const pusher = new PushBullet('o.lSDa9wEEuFFaPGTUDqnmvS3IneqY2KzY');
+const pusher = new PushBullet(process.env.PUSHBULLET);
 const notificationTracker = new NotificationTracker();
 
 const config = {
