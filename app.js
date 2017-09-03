@@ -93,6 +93,7 @@ function sendMonToPhone(pokemon) {
 }
 
 function main() {
+  console.log('running at:' + Date());
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       const data = JSON.parse(body);
@@ -116,10 +117,7 @@ server.use(bodyParser.json());
 server.use(express.static(path.join(__dirname, 'client')));
 
 server.post('/update-position', function(req, res){
-  console.log(req.body, config);
-  console.log(typeof req.body.lat);
   config.location = req.body.location
-  console.log(config);
   res.sendStatus(200);
 });
 

@@ -1,5 +1,6 @@
-const updateLocationButton = document.getElementById('updateLocationButton');
-updateLocationButton.addEventListener('click', handleUpdateLocationButtonClick);
+const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
+const updateLocationButton = document.getElementById('update-location-button');
+updateLocationButton.addEventListener(touchEvent, handleUpdateLocationButtonClick);
 
 function handleUpdateLocationButtonClick() {
   updateLocationButton.disabled = true
@@ -28,7 +29,7 @@ function sendLocationToServer(position) {
     }
   });
 
-  xhr.open("POST", "http://localhost:1234/update-position");
+  xhr.open("POST", window.location.href + "update-position");
   xhr.setRequestHeader("content-type", "application/json");
   xhr.setRequestHeader("cache-control", "no-cache");
   xhr.setRequestHeader("postman-token", "833e336f-6b36-9a34-88fb-ef919dadf657");
