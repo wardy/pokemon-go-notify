@@ -177,9 +177,10 @@ function main() {
 server.listen(process.env.PORT || 1234);
 
 setInterval(main, 30000);
+
 if (process.env.NODE_ENV === 'production') {
   setInterval(function() {
-    request('http://pokemon-no.herokuapp.com', function(err, response, body) {
+    request('/', function(err, response, body) {
       console.info('App awakened', new Date().toUTCString());
     });
   }, 300000);
