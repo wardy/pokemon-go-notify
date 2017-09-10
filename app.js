@@ -1,25 +1,14 @@
 const request = require('request');
-const path = require('path');
-const express = require('express');
-const bodyParser = require('body-parser')
 const PushBullet = require('pushbullet');
+
 const PokemonNames = require('./pokemon-data');
 const NotificationTracker = require('./notification-tracker');
 const { timeLeftInSeconds } = require('./shared');
+const config = require('./config');
+const server = require('./server');
 
 const pusher = new PushBullet(process.env.PUSHBULLET);
 const notificationTracker = new NotificationTracker();
-
-const config = {
-  location: {
-    lat: 51.4877871,
-    lng: -0.32711629999999997
-  },
-  tolerance: {
-    distanceFromLocation: 5,
-    ivPercentage: 1
-  }
-}
 
 const options = {
   url: 'https://londonpogomap.com/query2.php?token=pleaseDontStealOurData&since=0&mons=3,6,9,59,65,68,76,89,103,106,107,108,112,113,130,131,134,135,136,137,142,143,149,154,157,160,181,196,197,201,212,214,232,233,237,242,247,248',
@@ -93,7 +82,7 @@ function sendMonToPhone(pokemon) {
 }
 
 function main() {
-  console.log('running at:' + Date());
+  console.info('Running at: ' + new Date().toUTCString());
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       const data = JSON.parse(body);
@@ -112,15 +101,13 @@ function main() {
   });
 }
 
-const server = express();
-server.use(bodyParser.json());
-server.use(express.static(path.join(__dirname, 'client')));
-
-server.post('/update-position', function(req, res){
-  config.location = req.body.location
-  res.sendStatus(200);
-});
-
 server.listen(process.env.PORT || 1234);
 
 setInterval(main, 30000);
+if (process.env.NODE_ENV === 'production') {
+  setInterval(function() {
+    request('http://pokemon-no.herokuapp.com', function(err, response, body) {
+      console.info('App awakened', new Date().toUTCString());
+    });
+  }, 300000);
+}
