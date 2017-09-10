@@ -78,7 +78,7 @@ module.exports = {
   '244': 'Entei',
   '196': 'Espeon',
   '102': 'Exeggcute',
-  '83': 'Farfetch\'d',
+  '83': "Farfetch'd",
   '22': 'Fearow',
   '180': 'Flaaffy',
   '205': 'Forretress',
@@ -124,4 +124,4 @@ module.exports = {
   '166': 'Ledian',
   '165': 'Ledyba',
   '249': 'Lugia'
-}
+};

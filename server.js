@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 const lusca = require('lusca');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 
 const config = require('./config');
 
@@ -23,6 +23,6 @@ server.get('/tolerances', function(req, res) {
 server.post('/tolerances', function(req, res) {
   config.tolerance = req.body;
   res.sendStatus(200);
-})
+});
 
 module.exports = server;
