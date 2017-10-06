@@ -1,13 +1,16 @@
 const path = require('path');
 const express = require('express');
 const lusca = require('lusca');
+const morgan = require('morgan')
 const bodyParser = require('body-parser');
 
 const config = require('./config');
 
 const server = express();
+const logger = morgan('combined')
 
 server.use(lusca());
+server.use(logger);
 server.use(bodyParser.json());
 server.use(express.static(path.join(__dirname, 'client')));
 

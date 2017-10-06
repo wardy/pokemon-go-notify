@@ -15,6 +15,7 @@
     "body-parser": "^1.17.2",
     "express": "^4.15.4",
     "lusca": "^1.5.1",
+    "morgan": "^1.9.0",
     "pushbullet": "^2.0.0",
     "request": "^2.81.0"
   },
