@@ -6,6 +6,11 @@ body {
   padding: 0 30px
 }
 
+#wrapper {
+  width: 100%;
+  margin: auto;
+}
+
 h1 {
   width: 100%;
   text-align: center;
